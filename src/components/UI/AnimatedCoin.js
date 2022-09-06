@@ -25,7 +25,12 @@ const AnimatedCoin = forwardRef(({ isLoading, style, isLoop }, ref) => {
 
   return (
     <View style={[styles.container, style]}>
-      <LottieView ref={ref} source={assets} loop={isLoop} />
+      <LottieView
+        resizeMode='contain'
+        ref={ref}
+        source={assets}
+        loop={isLoop}
+      />
     </View>
   )
 })

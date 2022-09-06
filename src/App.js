@@ -19,6 +19,7 @@ import {
 import { Colors } from 'react-native/Libraries/NewAppScreen'
 import CoinIcon from './components/icons/icons'
 import AnimatedCoin from './components/UI/AnimatedCoin'
+import { sleep } from './utils/helpers/general'
 
 const App = () => {
   const animationRef = useRef(null)
@@ -26,6 +27,15 @@ const App = () => {
   useEffect(() => {
     animationRef.current?.play()
   }, [])
+
+  useEffect(() => {
+    setAsyncCoinAnimationEnd()
+  }, [])
+
+  const setAsyncCoinAnimationEnd = async () => {
+    await sleep(2010)
+    animationRef.current?.pause()
+  }
 
   const isDarkMode = useColorScheme() === 'dark'
 
@@ -48,7 +58,7 @@ const App = () => {
           <Text style={styles.coinText}>120р.</Text>
         </View>
       </View>
-      <AnimatedCoin ref={animationRef} isLoading />
+      <AnimatedCoin isLoop ref={animationRef} isLoading />
     </SafeAreaView>
   )
 }
