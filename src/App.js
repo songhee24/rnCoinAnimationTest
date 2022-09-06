@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import {
   SafeAreaView,
   StatusBar,
@@ -18,8 +18,15 @@ import {
 
 import { Colors } from 'react-native/Libraries/NewAppScreen'
 import CoinIcon from './components/icons/icons'
+import AnimatedCoin from './components/UI/AnimatedCoin'
 
 const App = () => {
+  const animationRef = useRef(null)
+
+  useEffect(() => {
+    animationRef.current?.play()
+  }, [])
+
   const isDarkMode = useColorScheme() === 'dark'
 
   const backgroundStyle = {
@@ -41,6 +48,7 @@ const App = () => {
           <Text style={styles.coinText}>120р.</Text>
         </View>
       </View>
+      <AnimatedCoin ref={animationRef} isLoading />
     </SafeAreaView>
   )
 }
