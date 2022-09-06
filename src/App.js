@@ -31,10 +31,15 @@ const App = () => {
   const animationRef = useRef(null)
 
   const offset = useSharedValue(0)
+  const scale = useSharedValue(1)
 
   const animatedStyles = useAnimatedStyle(() => {
     return {
-      transform: [{ translateX: offset.value * 255 }],
+      transform: [
+        { translateX: offset.value * 255 },
+        // { translateY: 0 },
+        { scale: scale.value },
+      ],
     }
   })
 
@@ -72,7 +77,7 @@ const App = () => {
           <Text style={styles.coinText}>120р.</Text>
         </View>
       </View>
-      <Animated.View style={[animatedStyles]}>
+      <Animated.View style={[styles.animatedContainerStyles, animatedStyles]}>
         <AnimatedCoin isLoop ref={animationRef} isLoading />
       </Animated.View>
       <Button
@@ -107,6 +112,10 @@ const styles = StyleSheet.create({
   coinText: {
     fontSize: 16,
     fontWeight: '500',
+  },
+
+  animatedContainerStyles: {
+    position: 'absolute',
   },
 })
 
