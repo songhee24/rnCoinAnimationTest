@@ -7,7 +7,13 @@
  */
 
 import React, { useEffect, useRef } from 'react'
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from 'react-native-reanimated'
 import {
+  Button,
   SafeAreaView,
   StatusBar,
   StyleSheet,
@@ -23,6 +29,14 @@ import { sleep } from './utils/helpers/general'
 
 const App = () => {
   const animationRef = useRef(null)
+
+  const offset = useSharedValue(0)
+
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: offset.value * 255 }],
+    }
+  })
 
   useEffect(() => {
     animationRef.current?.play()
@@ -58,7 +72,15 @@ const App = () => {
           <Text style={styles.coinText}>120р.</Text>
         </View>
       </View>
-      <AnimatedCoin isLoop ref={animationRef} isLoading />
+      <Animated.View style={[animatedStyles]}>
+        <AnimatedCoin isLoop ref={animationRef} isLoading />
+      </Animated.View>
+      <Button
+        onPress={() => {
+          offset.value = withSpring(Math.random())
+        }}
+        title='Move'
+      />
     </SafeAreaView>
   )
 }
