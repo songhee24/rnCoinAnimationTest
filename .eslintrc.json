@@ -1,0 +1,63 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        "plugin:react/recommended",
+        "airbnb",
+        "airbnb/hooks",
+        "prettier"
+    ],
+    "overrides": [
+    ],
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react",
+        "react-native"
+    ],
+    "rules": {
+        "semi": "off",
+        "no-use-before-define": ["error", { "variables": false }],
+        "react/function-component-definition": "off",
+        "import/prefer-default-export": "off",
+        "react/prop-types": "off",
+        "react/jsx-props-no-spreading": "off",
+        "import/no-unresolved": "off",
+        "arrow-body-style": "off",
+        "react/react-in-jsx-scope": "off",
+        "max-len": [
+            "error",
+            {
+                "code": 100,
+                "ignoreStrings": true,
+                "ignoreTemplateLiterals": true,
+                "ignoreRegExpLiterals": true
+            }
+        ],
+        "react/jsx-filename-extension": [
+            1,
+            {
+                "extensions": [
+                    ".js",
+                    ".jsx"
+                ]
+            }
+        ],
+        "no-multi-spaces": [
+            "error",
+            {
+                "ignoreEOLComments": false
+            }
+        ],
+        "no-param-reassign": "off",
+        "no-return-assign": "off",
+        "no-void": "off",
+        "react-hooks/exhaustive-deps": "off",
+        "consistent-return": "off",
+        "default-param-last": "off"
+    }
+}
