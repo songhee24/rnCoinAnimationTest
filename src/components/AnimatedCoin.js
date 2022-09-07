@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { forwardRef, useImperativeHandle } from 'react'
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -9,46 +9,60 @@ import { StyleSheet } from 'react-native'
 import { sleep } from '../utils/helpers/general'
 import LottieCoin from './UI/LottieCoin'
 
-const AnimatedCoin = ({ coinViewLayout }) => {
-  const animationRef = React.useRef(null)
+const AnimatedCoin = forwardRef(
+  ({ coinViewLayout, onInitialAnimationFinish }, ref) => {
+    const animationRef = React.useRef(null)
 
-  const offsetY = useSharedValue(0)
-  const offsetX = useSharedValue(0)
-  const scale = useSharedValue(1)
-  const opacity = useSharedValue(1)
+    const offsetY = useSharedValue(0)
+    const offsetX = useSharedValue(0)
+    const scale = useSharedValue(1)
+    const opacity = useSharedValue(1)
 
-  const [animationStart, setAnimationStart] = React.useState(false)
+    const [animationStart, setAnimationStart] = React.useState(false)
 
-  const animatedStyles = useAnimatedStyle(() => {
-    return {
-      transform: [
-        { translateX: offsetX.value },
-        { translateY: offsetY.value },
-        { scale: scale.value },
-      ],
+    const animatedStyles = useAnimatedStyle(() => {
+      return {
+        transform: [
+          { translateX: offsetX.value },
+          { translateY: offsetY.value },
+          { scale: scale.value },
+        ],
+      }
+    })
+
+    const opacityAnimation = useAnimatedStyle(() => {
+      return {
+        opacity: opacity.value,
+      }
+    })
+
+    React.useEffect(() => {
+      animationRef.current?.play()
+    }, [])
+
+    React.useEffect(() => {
+      if (coinViewLayout) {
+        setAsyncCoinAnimationEnd()
+      }
+    }, [coinViewLayout])
+
+    const setAsyncCoinAnimationEnd = async () => {
+      try {
+        await sleep(2010)
+        animationRef.current?.pause()
+        startCoinStoringAnimation()
+      } catch (e) {
+        console.log(e)
+      }
     }
-  })
 
-  const opacityAnimation = useAnimatedStyle(() => {
-    return {
-      opacity: opacity.value,
-    }
-  })
+    useImperativeHandle(ref, () => ({
+      getCoinMovingAnimation() {
+        startCoinStoringAnimation()
+      },
+    }))
 
-  React.useEffect(() => {
-    animationRef.current?.play()
-  }, [])
-
-  React.useEffect(() => {
-    if (coinViewLayout) {
-      setAsyncCoinAnimationEnd()
-    }
-  }, [coinViewLayout])
-
-  const setAsyncCoinAnimationEnd = async () => {
-    try {
-      await sleep(2010)
-      animationRef.current?.pause()
+    const startCoinStoringAnimation = async () => {
       setAnimationStart(true)
       offsetY.value = withSpring(-coinViewLayout.x)
       offsetX.value = withSpring(coinViewLayout.width)
@@ -56,23 +70,34 @@ const AnimatedCoin = ({ coinViewLayout }) => {
       opacity.value = withTiming(0, {
         duration: 2000,
       })
-    } catch (e) {
-      console.log(e)
+      await sleep(1900)
+      resetCoinStoringAnimation()
+      onInitialAnimationFinish(true)
     }
-  }
 
-  return (
-    <Animated.View
-      style={[
-        animatedContainerStyles(animationStart).animatedContainerStyles,
-        animatedStyles,
-        opacityAnimation,
-      ]}
-    >
-      <LottieCoin isLoop ref={animationRef} isLoading />
-    </Animated.View>
-  )
-}
+    const resetCoinStoringAnimation = () => {
+      offsetY.value = withSpring(0)
+      offsetX.value = withSpring(0)
+      scale.value = withSpring(1)
+      opacity.value = withTiming(1, {
+        duration: 2000,
+      })
+      setAnimationStart(false)
+    }
+
+    return (
+      <Animated.View
+        style={[
+          animatedContainerStyles(animationStart).animatedContainerStyles,
+          animatedStyles,
+          opacityAnimation,
+        ]}
+      >
+        <LottieCoin isLoop ref={animationRef} isLoading />
+      </Animated.View>
+    )
+  },
+)
 
 const animatedContainerStyles = isAnimationStart =>
   StyleSheet.create({

@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   SafeAreaView,
   StatusBar,
@@ -19,14 +19,38 @@ import {
 import { Colors } from 'react-native/Libraries/NewAppScreen'
 import CoinIcon from './components/icons/icons'
 import AnimatedCoin from './components/AnimatedCoin'
+import { sleep } from './utils/helpers/general'
 
 const App = () => {
+  const AnimatedCoinRef = React.useRef()
+  const { getCoinMovingAnimation } = AnimatedCoinRef.current || {}
   const [coinViewLayout, setCoinViewLayout] = React.useState(null)
+  const [animationEnd, setAnimationEnd] = React.useState(false)
 
   const isDarkMode = useColorScheme() === 'dark'
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.white,
+  }
+
+  useEffect(() => {
+    if (animationEnd) {
+      repeatAnimation()
+    }
+  }, [animationEnd])
+
+  const repeatAnimation = async () => {
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < 3; i++) {
+      // eslint-disable-next-line no-await-in-loop
+      await sleep(1000)
+      console.log('calls')
+      getCoinMovingAnimation()
+    }
+  }
+
+  const initialAnimationFinishHandler = animationEndValue => {
+    setAnimationEnd(animationEndValue)
   }
 
   return (
@@ -55,7 +79,11 @@ const App = () => {
           <Text style={styles.coinText}>120р.</Text>
         </View>
       </View>
-      <AnimatedCoin coinViewLayout={coinViewLayout} />
+      <AnimatedCoin
+        onInitialAnimationFinish={initialAnimationFinishHandler}
+        ref={AnimatedCoinRef}
+        coinViewLayout={coinViewLayout}
+      />
     </SafeAreaView>
   )
 }
