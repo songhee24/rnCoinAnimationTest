@@ -11,6 +11,7 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
+  withTiming,
 } from 'react-native-reanimated'
 import {
   Button,
@@ -33,6 +34,7 @@ const App = () => {
   const offsetY = useSharedValue(0)
   const offsetX = useSharedValue(0)
   const scale = useSharedValue(1)
+  const opacity = useSharedValue(1)
 
   const [coinViewLayout, setCoinViewLayout] = useState(null)
   const [animationStart, setAnimationStart] = useState(false)
@@ -47,17 +49,36 @@ const App = () => {
     }
   })
 
+  const opacityAnimation = useAnimatedStyle(() => {
+    return {
+      opacity: opacity.value,
+    }
+  })
+
   useEffect(() => {
     animationRef.current?.play()
   }, [])
 
   useEffect(() => {
-    setAsyncCoinAnimationEnd()
-  }, [])
+    if (coinViewLayout) {
+      setAsyncCoinAnimationEnd()
+    }
+  }, [coinViewLayout])
 
   const setAsyncCoinAnimationEnd = async () => {
-    await sleep(2010)
-    animationRef.current?.pause()
+    try {
+      await sleep(2010)
+      animationRef.current?.pause()
+      setAnimationStart(true)
+      offsetY.value = withSpring(-coinViewLayout.x)
+      offsetX.value = withSpring(coinViewLayout.width)
+      scale.value = withSpring(0.1)
+      opacity.value = withTiming(0, {
+        duration: 1300,
+      })
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   const isDarkMode = useColorScheme() === 'dark'
@@ -96,19 +117,12 @@ const App = () => {
         style={[
           animatedContainerStyles(animationStart).animatedContainerStyles,
           animatedStyles,
+          opacityAnimation,
         ]}
       >
         <AnimatedCoin isLoop ref={animationRef} isLoading />
       </Animated.View>
-      <Button
-        onPress={() => {
-          setAnimationStart(true)
-          offsetY.value = withSpring(-coinViewLayout.x)
-          offsetX.value = withSpring(coinViewLayout.width)
-          scale.value = withSpring(0.1)
-        }}
-        title='Move'
-      />
+      <Button onPress={() => {}} title='Move' />
     </SafeAreaView>
   )
 }
