@@ -22,12 +22,24 @@ import AnimatedCoin from './components/coinAnimations/AnimatedCoin'
 
 const App = () => {
   const [coinViewLayout, setCoinViewLayout] = React.useState(null)
+  const [showSecond, setShowSecond] = React.useState(false)
+  const [showThird, setShowThird] = React.useState(false)
 
   const isDarkMode = useColorScheme() === 'dark'
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.white,
   }
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => setShowSecond(true), 1400)
+    return () => clearTimeout(timer)
+  })
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => setShowThird(true), 1400)
+    return () => clearTimeout(timer)
+  })
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -55,7 +67,21 @@ const App = () => {
           <Text style={styles.coinText}>120р.</Text>
         </View>
       </View>
-      <AnimatedCoin coinViewLayout={coinViewLayout} delay={3} />
+      <AnimatedCoin coinViewLayout={coinViewLayout} />
+      {showSecond && (
+        <AnimatedCoin
+          coinViewLayout={coinViewLayout}
+          isAnimationLottieEnd
+          controlledStartAnimation
+        />
+      )}
+      {showThird && (
+        <AnimatedCoin
+          coinViewLayout={coinViewLayout}
+          isAnimationLottieEnd
+          controlledStartAnimation
+        />
+      )}
     </SafeAreaView>
   )
 }

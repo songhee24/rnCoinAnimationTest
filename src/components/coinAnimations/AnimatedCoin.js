@@ -8,7 +8,11 @@ import Animated, {
 import { StyleSheet, View } from 'react-native'
 import LottieControlledAnimation from './LottieControlledAnimation'
 
-const AnimatedCoin = ({ coinViewLayout, delay = 1 }) => {
+const AnimatedCoin = ({
+  coinViewLayout,
+  controlledStartAnimation,
+  isAnimationLottieEnd = false,
+}) => {
   const offsetY = useSharedValue(0)
   const offsetX = useSharedValue(0)
   const scale = useSharedValue(1)
@@ -37,7 +41,11 @@ const AnimatedCoin = ({ coinViewLayout, delay = 1 }) => {
     if (coinViewLayout && animationEnd) {
       setAsyncCoinAnimationEnd()
     }
-  }, [coinViewLayout, animationEnd])
+
+    if (controlledStartAnimation) {
+      setAsyncCoinAnimationEnd()
+    }
+  }, [coinViewLayout, animationEnd, controlledStartAnimation])
 
   const setAsyncCoinAnimationEnd = () => {
     startCoinStoringAnimation()
@@ -57,7 +65,7 @@ const AnimatedCoin = ({ coinViewLayout, delay = 1 }) => {
     })
   }
 
-  if (animationEnd) {
+  if (isAnimationLottieEnd) {
     return (
       <Animated.View
         style={[
@@ -71,10 +79,22 @@ const AnimatedCoin = ({ coinViewLayout, delay = 1 }) => {
     )
   }
 
+  // if (animationEnd) {
+  //   return (
+  //     <Animated.View
+  //       style={[
+  //         animatedContainerStyles(animationStart).animatedContainerStyles,
+  //         animatedStyles,
+  //         opacityAnimation,
+  //       ]}
+  //     >
+  //       <LottieControlledAnimation />
+  //     </Animated.View>
+  //   )
+  // }
+
   return (
-    <View
-      style={animatedContainerStyles(animationStart).animatedContainerStyles}
-    >
+    <View style={{ position: 'absolute', top: 0, left: 0 }}>
       <LottieControlledAnimation
         play
         onGetAnimationFinished={lottieAnimationEndHandler}
