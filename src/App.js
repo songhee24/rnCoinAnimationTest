@@ -35,6 +35,7 @@ const App = () => {
   const scale = useSharedValue(1)
 
   const [coinViewLayout, setCoinViewLayout] = useState(null)
+  const [animationStart, setAnimationStart] = useState(false)
 
   const animatedStyles = useAnimatedStyle(() => {
     return {
@@ -91,11 +92,17 @@ const App = () => {
           <Text style={styles.coinText}>120р.</Text>
         </View>
       </View>
-      <Animated.View style={[styles.animatedContainerStyles, animatedStyles]}>
+      <Animated.View
+        style={[
+          animatedContainerStyles(animationStart).animatedContainerStyles,
+          animatedStyles,
+        ]}
+      >
         <AnimatedCoin isLoop ref={animationRef} isLoading />
       </Animated.View>
       <Button
         onPress={() => {
+          setAnimationStart(true)
           offsetY.value = withSpring(-coinViewLayout.x)
           offsetX.value = withSpring(coinViewLayout.width)
           scale.value = withSpring(0.1)
@@ -105,6 +112,15 @@ const App = () => {
     </SafeAreaView>
   )
 }
+
+const animatedContainerStyles = isAnimationStart =>
+  StyleSheet.create({
+    animatedContainerStyles: {
+      position: 'absolute',
+      top: isAnimationStart ? -30 : 0,
+      left: isAnimationStart ? 52 : 0,
+    },
+  })
 
 const styles = StyleSheet.create({
   header: {
@@ -128,12 +144,6 @@ const styles = StyleSheet.create({
   coinText: {
     fontSize: 16,
     fontWeight: '500',
-  },
-
-  animatedContainerStyles: {
-    position: 'absolute',
-    top: -30,
-    left: 52,
   },
 })
 
