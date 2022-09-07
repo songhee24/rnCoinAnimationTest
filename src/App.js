@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -30,14 +30,17 @@ import { sleep } from './utils/helpers/general'
 const App = () => {
   const animationRef = useRef(null)
 
-  const offset = useSharedValue(0)
+  const offsetY = useSharedValue(0)
+  const offsetX = useSharedValue(0)
   const scale = useSharedValue(1)
+
+  const [coinViewLayout, setCoinViewLayout] = useState(null)
 
   const animatedStyles = useAnimatedStyle(() => {
     return {
       transform: [
-        { translateX: offset.value * 255 },
-        // { translateY: 0 },
+        { translateX: offsetX.value },
+        { translateY: offsetY.value },
         { scale: scale.value },
       ],
     }
@@ -72,7 +75,19 @@ const App = () => {
       />
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Главная</Text>
-        <View style={styles.coinInfo}>
+        <View
+          style={styles.coinInfo}
+          onLayout={event => {
+            const { layout } = event.nativeEvent
+            console.log(layout)
+            setCoinViewLayout({
+              height: layout.height,
+              width: layout.width,
+              x: layout.x,
+              y: layout.y,
+            })
+          }}
+        >
           <CoinIcon />
           <Text style={styles.coinText}>120р.</Text>
         </View>
@@ -82,7 +97,9 @@ const App = () => {
       </Animated.View>
       <Button
         onPress={() => {
-          offset.value = withSpring(Math.random())
+          offsetY.value = withSpring(-coinViewLayout.x)
+          offsetX.value = withSpring(coinViewLayout.width)
+          scale.value = withSpring(1)
         }}
         title='Move'
       />

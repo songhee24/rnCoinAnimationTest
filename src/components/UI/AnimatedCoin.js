@@ -8,7 +8,6 @@ const styles = StyleSheet.create({
   container: {
     width: getWindowWidth(),
     height: getWindowHeight(),
-    backgroundColor: 'rgba(0,0,0,0.1)',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
