@@ -79,7 +79,6 @@ const App = () => {
           style={styles.coinInfo}
           onLayout={event => {
             const { layout } = event.nativeEvent
-            console.log(layout)
             setCoinViewLayout({
               height: layout.height,
               width: layout.width,
@@ -99,7 +98,7 @@ const App = () => {
         onPress={() => {
           offsetY.value = withSpring(-coinViewLayout.x)
           offsetX.value = withSpring(coinViewLayout.width)
-          scale.value = withSpring(1)
+          scale.value = withSpring(0.1)
         }}
         title='Move'
       />
@@ -133,6 +132,8 @@ const styles = StyleSheet.create({
 
   animatedContainerStyles: {
     position: 'absolute',
+    top: -30,
+    left: 52,
   },
 })
 
