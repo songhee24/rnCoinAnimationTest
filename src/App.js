@@ -6,15 +6,8 @@
  * @flow strict-local
  */
 
-import React, { useEffect, useRef, useState } from 'react'
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withTiming,
-} from 'react-native-reanimated'
+import React from 'react'
 import {
-  Button,
   SafeAreaView,
   StatusBar,
   StyleSheet,
@@ -25,61 +18,10 @@ import {
 
 import { Colors } from 'react-native/Libraries/NewAppScreen'
 import CoinIcon from './components/icons/icons'
-import LottieCoin from './components/UI/LottieCoin'
-import { sleep } from './utils/helpers/general'
+import AnimatedCoin from './components/AnimatedCoin'
 
 const App = () => {
-  const animationRef = useRef(null)
-
-  const offsetY = useSharedValue(0)
-  const offsetX = useSharedValue(0)
-  const scale = useSharedValue(1)
-  const opacity = useSharedValue(1)
-
-  const [coinViewLayout, setCoinViewLayout] = useState(null)
-  const [animationStart, setAnimationStart] = useState(false)
-
-  const animatedStyles = useAnimatedStyle(() => {
-    return {
-      transform: [
-        { translateX: offsetX.value },
-        { translateY: offsetY.value },
-        { scale: scale.value },
-      ],
-    }
-  })
-
-  const opacityAnimation = useAnimatedStyle(() => {
-    return {
-      opacity: opacity.value,
-    }
-  })
-
-  useEffect(() => {
-    animationRef.current?.play()
-  }, [])
-
-  useEffect(() => {
-    if (coinViewLayout) {
-      setAsyncCoinAnimationEnd()
-    }
-  }, [coinViewLayout])
-
-  const setAsyncCoinAnimationEnd = async () => {
-    try {
-      await sleep(2010)
-      animationRef.current?.pause()
-      setAnimationStart(true)
-      offsetY.value = withSpring(-coinViewLayout.x)
-      offsetX.value = withSpring(coinViewLayout.width)
-      scale.value = withSpring(0.1)
-      opacity.value = withTiming(0, {
-        duration: 1300,
-      })
-    } catch (e) {
-      console.log(e)
-    }
-  }
+  const [coinViewLayout, setCoinViewLayout] = React.useState(null)
 
   const isDarkMode = useColorScheme() === 'dark'
 
@@ -113,28 +55,10 @@ const App = () => {
           <Text style={styles.coinText}>120р.</Text>
         </View>
       </View>
-      <Animated.View
-        style={[
-          animatedContainerStyles(animationStart).animatedContainerStyles,
-          animatedStyles,
-          opacityAnimation,
-        ]}
-      >
-        <LottieCoin isLoop ref={animationRef} isLoading />
-      </Animated.View>
-      <Button onPress={() => {}} title='Move' />
+      <AnimatedCoin coinViewLayout={coinViewLayout} />
     </SafeAreaView>
   )
 }
-
-const animatedContainerStyles = isAnimationStart =>
-  StyleSheet.create({
-    animatedContainerStyles: {
-      position: 'absolute',
-      top: isAnimationStart ? -30 : 0,
-      left: isAnimationStart ? 52 : 0,
-    },
-  })
 
 const styles = StyleSheet.create({
   header: {
