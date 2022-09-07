@@ -25,7 +25,7 @@ import {
 
 import { Colors } from 'react-native/Libraries/NewAppScreen'
 import CoinIcon from './components/icons/icons'
-import AnimatedCoin from './components/UI/AnimatedCoin'
+import LottieCoin from './components/UI/LottieCoin'
 import { sleep } from './utils/helpers/general'
 
 const App = () => {
@@ -120,7 +120,7 @@ const App = () => {
           opacityAnimation,
         ]}
       >
-        <AnimatedCoin isLoop ref={animationRef} isLoading />
+        <LottieCoin isLoop ref={animationRef} isLoading />
       </Animated.View>
       <Button onPress={() => {}} title='Move' />
     </SafeAreaView>

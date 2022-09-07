@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
   },
 })
 
-const AnimatedCoin = forwardRef(({ isLoading, style, isLoop }, ref) => {
+const LottieCoin = forwardRef(({ isLoading, style, isLoop }, ref) => {
   if (!isLoading) {
     return null
   }
@@ -30,4 +30,4 @@ const AnimatedCoin = forwardRef(({ isLoading, style, isLoop }, ref) => {
   )
 })
 
-export default AnimatedCoin
+export default LottieCoin
